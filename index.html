@@ -46,10 +46,7 @@
                         iframe.src = googleFormURL;
                         document.body.appendChild(iframe);
 
-                        // 提交後跳轉到其他頁面
-                        setTimeout(function() {
-                            window.location.href = "https://你的重定向網址"; // 替換成你的重定向網址
-                        }, 1000); // 稍微延遲跳轉，確保提交完成
+                        
                     }
                 }, function () {
                     alert("無法取得您的位置。");
