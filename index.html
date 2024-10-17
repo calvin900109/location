@@ -37,7 +37,6 @@
                     if (distance > maxDistance) {
                         alert('距離教室太遠。');
                     } else {
-                        // 將地址提交到 Google 表單，替換 entry.1896918426 為實際的 entry ID
                         var customText = "點名完成"; // 自定義的文字
                         var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(customText);
 
@@ -48,7 +47,9 @@
                         document.body.appendChild(iframe);
 
                         // 提交後跳轉到其他頁面
-                        window.location.href = "https://你的重定向網址"; // 替換成你的重定向網址
+                        setTimeout(function() {
+                            window.location.href = "https://你的重定向網址"; // 替換成你的重定向網址
+                        }, 1000); // 稍微延遲跳轉，確保提交完成
                     }
                 }, function () {
                     alert("無法取得您的位置。");
