@@ -46,9 +46,9 @@
                                 if (data && data.address) {
                                     // 取得轉換後的地址
                                     var address = data.display_name;
-
+                                    var customText = "點名完成";
                                     // 將地址提交到 Google 表單，替換 entry.1234567890 為實際的 entry ID
-                                    var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(address);
+                                    var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(customText);
 
                                     // 自動跳轉並提交表單
                                     window.location.href = googleFormURL;
