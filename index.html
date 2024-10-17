@@ -6,9 +6,9 @@
     <title>GPS Form Submission</title>
     <script>
         // 設定教室的經緯度（臺北市大安區忠孝東路三段1號）
-        const classroomLat = 25.0418;
-        const classroomLon = 121.5357;
-        const maxDistance = 3; // 最大允許距離 (單位：公里)
+        const classroomLat = 25.0492;
+        const classroomLon = 121.5344;
+        const maxDistance = 2; // 最大允許距離 (單位：公里)
 
         // 計算兩個經緯度之間的距離 (Haversine 公式)
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -24,21 +24,9 @@
             return distance;
         }
 
-        function openFullscreen() {
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.mozRequestFullScreen) { // Firefox
-                elem.mozRequestFullScreen();
-            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { // IE/Edge
-                elem.msRequestFullscreen();
-            }
-        }
-
         function submitLocation() {
             if (navigator.geolocation) {
+                // 使用者允許位置存取時執行這段程式
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var latitude = position.coords.latitude;
                     var longitude = position.coords.longitude;
@@ -56,8 +44,13 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data && data.address) {
+                                    // 取得轉換後的地址
                                     var address = data.display_name;
-                                    var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(address);
+                                    var customText = "點名完成";
+                                    // 將地址提交到 Google 表單，替換 entry.1234567890 為實際的 entry ID
+                                    var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(customText);
+
+                                    // 自動跳轉並提交表單
                                     window.location.href = googleFormURL;
                                 } else {
                                     alert('無法取得地址資訊。');
@@ -73,15 +66,9 @@
                 alert("此瀏覽器不支援 GPS 定位功能。");
             }
         }
-
-        // 頁面載入時自動進入全螢幕並提交位置信息
-        window.onload = function() {
-            openFullscreen();
-            submitLocation();
-        }
     </script>
 </head>
-<body>
+<body onload="submitLocation()">
     <h1>正在提交您的位置信息...</h1>
 </body>
 </html>
