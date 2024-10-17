@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Form Submission</title>
+    <script>
+        // 設定教室的經緯度（臺北市大安區忠孝東路三段1號）
+        const classroomLat = 25.0492;
+        const classroomLon = 121.5344;
+        const maxDistance = 0.2; // 最大允許距離 (單位：公里)
+
+        // 計算兩個經緯度之間的距離 (Haversine 公式)
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // 地球半徑，單位為公里
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = R * c; // 計算出距離 (公里)
+            return distance;
+        }
+
+        function submitLocation() {
+            if (navigator.geolocation) {
+                // 使用者允許位置存取時執行這段程式
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+
+                    // 計算使用者位置與教室位置的距離
+                    var distance = getDistance(latitude, longitude, classroomLat, classroomLon);
+
+                    if (distance > maxDistance) {
+                        alert('距離教室太遠。');
+                    } else {
+                        // 呼叫 Nominatim API 將經緯度轉換為具體地址
+                        var nominatimAPI = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + latitude + '&lon=' + longitude + '&zoom=18&addressdetails=1';
+
+                        fetch(nominatimAPI)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data && data.address) {
+                                    // 取得轉換後的地址
+                                    var address = data.display_name;
+
+                                    // 將地址提交到 Google 表單，替換 entry.1234567890 為實際的 entry ID
+                                    var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(address);
+
+                                    // 自動跳轉並提交表單
+                                    window.location.href = googleFormURL;
+                                } else {
+                                    alert('無法取得地址資訊。');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Nominatim API 發生錯誤：', error);
+                                alert('定位失敗，請稍後再試。');
+                            });
+                    }
+                });
+            } else {
+                alert("此瀏覽器不支援 GPS 定位功能。");
+            }
+        }
+    </script>
+</head>
+<body onload="submitLocation()">
+    <h1>正在提交您的位置信息...</h1>
+</body>
+</html>
