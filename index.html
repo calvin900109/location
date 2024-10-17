@@ -37,30 +37,21 @@
                     if (distance > maxDistance) {
                         alert('距離教室太遠。');
                     } else {
-                        // 呼叫 Nominatim API 將經緯度轉換為具體地址
-                        var nominatimAPI = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + latitude + '&lon=' + longitude + '&zoom=18&addressdetails=1';
+                        // 將地址提交到 Google 表單，替換 entry.1896918426 為實際的 entry ID
+                        var customText = "點名完成"; // 自定義的文字
+                        var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(customText);
 
-                        fetch(nominatimAPI)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data && data.address) {
-                                    // 取得轉換後的地址
-                                    var address = data.display_name;
-                                    var customText = "點名完成";
-                                    // 將地址提交到 Google 表單，替換 entry.1234567890 為實際的 entry ID
-                                    var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(customText);
+                        // 使用隱藏的 iframe 提交表單
+                        var iframe = document.createElement("iframe");
+                        iframe.style.display = "none";
+                        iframe.src = googleFormURL;
+                        document.body.appendChild(iframe);
 
-                                    // 自動跳轉並提交表單
-                                    window.location.href = googleFormURL;
-                                } else {
-                                    alert('無法取得地址資訊。');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Nominatim API 發生錯誤：', error);
-                                alert('定位失敗，請稍後再試。');
-                            });
+                        // 提交後跳轉到其他頁面
+                        window.location.href = "https://你的重定向網址"; // 替換成你的重定向網址
                     }
+                }, function () {
+                    alert("無法取得您的位置。");
                 });
             } else {
                 alert("此瀏覽器不支援 GPS 定位功能。");
