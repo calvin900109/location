@@ -24,9 +24,21 @@
             return distance;
         }
 
+        function openFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { // Firefox
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { // IE/Edge
+                elem.msRequestFullscreen();
+            }
+        }
+
         function submitLocation() {
             if (navigator.geolocation) {
-                // 使用者允許位置存取時執行這段程式
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var latitude = position.coords.latitude;
                     var longitude = position.coords.longitude;
@@ -44,13 +56,8 @@
                             .then(response => response.json())
                             .then(data => {
                                 if (data && data.address) {
-                                    // 取得轉換後的地址
                                     var address = data.display_name;
-
-                                    // 將地址提交到 Google 表單，替換 entry.1234567890 為實際的 entry ID
                                     var googleFormURL = "https://docs.google.com/forms/d/e/1FAIpQLSdU6Z_e91Vv_G0dXSksrZlBwCGSDiGlAWltGZkb8iL0EE0SRg/formResponse?entry.1896918426=" + encodeURIComponent(address);
-
-                                    // 自動跳轉並提交表單
                                     window.location.href = googleFormURL;
                                 } else {
                                     alert('無法取得地址資訊。');
@@ -66,9 +73,15 @@
                 alert("此瀏覽器不支援 GPS 定位功能。");
             }
         }
+
+        // 頁面載入時自動進入全螢幕並提交位置信息
+        window.onload = function() {
+            openFullscreen();
+            submitLocation();
+        }
     </script>
 </head>
-<body onload="submitLocation()">
+<body>
     <h1>正在提交您的位置信息...</h1>
 </body>
 </html>
